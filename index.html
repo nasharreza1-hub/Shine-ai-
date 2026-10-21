@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#090d18">
+<title>Shine AI — Prototype</title>
+<style>
+:root{--bg:#090d18;--panel:#111827;--panel2:#172033;--line:#273249;--text:#edf3ff;--muted:#9ba9c3;--cyan:#64e6ff;--violet:#a78bfa;--green:#7cf2c4}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#15203b 0%,var(--bg) 48%);color:var(--text);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
+button,input,textarea{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.app{max-width:1040px;margin:auto;min-height:100vh;display:flex;flex-direction:column;padding:18px 16px 96px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0 18px;border-bottom:1px solid #273249a8}
+.brand{display:flex;align-items:center;gap:11px}.logo{height:44px;width:44px;border-radius:15px;background:linear-gradient(140deg,#65e8ff,#8271ff 70%);display:grid;place-items:center;color:#07101d;font-size:23px;font-weight:900;box-shadow:0 0 28px #5ee8ff30}
+.brand h1{font-size:18px;letter-spacing:.2px;margin:0}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}
+.pill{border:1px solid #315a68;background:#10252d;color:#9df1ff;border-radius:99px;padding:7px 10px;font-size:11px;white-space:nowrap}
+.hero{text-align:center;padding:30px 8px 24px}.orb{height:104px;width:104px;margin:0 auto 16px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 25%,#d5ffff,#63ddff 18%,#7e70fa 48%,#202a58 72%);box-shadow:0 0 30px #60ddff4d, inset 0 0 20px #fff7;font-size:38px;color:#0b1224;position:relative}
+.orb:after{content:"";position:absolute;inset:-7px;border:1px solid #8deaff4d;border-radius:50%}
+.hero h2{font-size:clamp(25px,5vw,36px);line-height:1.12;margin:0 0 10px}.gradient{background:linear-gradient(90deg,var(--cyan),#c4b5fd);-webkit-background-clip:text;background-clip:text;color:transparent}.hero p{color:var(--muted);max-width:530px;margin:0 auto}
+.section-title{font-size:13px;color:#c9d5eb;margin:0 0 12px;font-weight:700;letter-spacing:.4px}
+.prompts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 auto 22px;max-width:720px;width:100%}
+.prompt{background:linear-gradient(140deg,#141e32,#101726);border:1px solid var(--line);border-radius:16px;text-align:left;padding:14px;color:var(--text);min-height:84px;transition:.2s}
+.prompt:hover{border-color:#62dff5;transform:translateY(-1px)}.prompt b{display:block;margin-bottom:5px;font-size:13px}.prompt span{font-size:12px;color:var(--muted)}
+.chat-wrap{width:100%;max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:12px;flex:1}
+.chat-head{display:flex;align-items:center;justify-content:space-between;margin-top:3px}.tiny-btn{border:1px solid var(--line);background:#111a2b;color:#c4d1e8;border-radius:10px;padding:7px 10px;font-size:12px}
+.messages{display:flex;flex-direction:column;gap:12px;min-height:110px}.msg{max-width:88%;border-radius:17px;padding:12px 14px;white-space:pre-wrap;overflow-wrap:anywhere}.msg.ai{align-self:flex-start;background:#141e30;border:1px solid #283650;border-top-left-radius:5px}.msg.user{align-self:flex-end;background:linear-gradient(130deg,#324a9a,#5444a5);border-top-right-radius:5px}.msg .who{font-size:10px;letter-spacing:.5px;color:#a9bddb;margin-bottom:4px;font-weight:700}.msg.user .who{color:#d8d5ff}
+.composer{display:flex;gap:8px;align-items:flex-end;padding:9px;background:#101726;border:1px solid #2a354c;border-radius:18px;position:sticky;bottom:76px;box-shadow:0 12px 30px #0004}
+.composer textarea{flex:1;resize:none;min-height:42px;max-height:130px;background:transparent;color:var(--text);border:0;outline:none;padding:10px 5px}.icon-btn,.send{height:42px;min-width:42px;border:1px solid var(--line);border-radius:13px;background:#18243a;color:#d9e6ff}.send{background:linear-gradient(135deg,#66e6ff,#9d8bff);color:#07111e;border:0;font-weight:900}
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:10;background:#0a0f1beF;border-top:1px solid #29344b;backdrop-filter:blur(16px);display:flex;justify-content:center;padding:8px 10px calc(8px + env(safe-area-inset-bottom));gap:5px}
+.nav button{flex:1;max-width:180px;background:transparent;border:0;border-radius:13px;color:#8594af;padding:9px 4px;font-size:11px}.nav button span{display:block;font-size:19px;margin-bottom:2px}.nav button.active{background:#1b2840;color:#a5efff}
+.page{display:none;width:100%;max-width:780px;margin:25px auto 0}.page.active{display:block}.card{background:linear-gradient(140deg,#141e30,#0f1625);border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:13px}.card h3{margin:0 0 7px;font-size:17px}.muted{color:var(--muted);font-size:13px}.big-mic{height:116px;width:116px;border-radius:50%;border:1px solid #6be5ff66;background:radial-gradient(circle at 35% 25%,#d9ffff,#6ddfff 18%,#7e70fa 60%,#202a58 80%);font-size:42px;color:#0b1326;display:grid;place-items:center;margin:20px auto;box-shadow:0 0 34px #62dff544}.voice-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.primary,.secondary{border-radius:12px;padding:11px 16px;border:0;font-weight:700}.primary{background:linear-gradient(120deg,#67e8f9,#a78bfa);color:#07101c}.secondary{background:#202b41;color:#e4edff;border:1px solid #34415b}.field{display:flex;flex-direction:column;gap:6px;margin:12px 0}.field label{font-size:12px;color:#b9c7df}.field input{background:#0a1120;border:1px solid #33415b;border-radius:11px;padding:12px;color:var(--text);width:100%}.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.stat{background:#0b1424;border:1px solid #29364d;border-radius:13px;padding:13px}.stat strong{display:block;font-size:23px}.stat small{color:var(--muted);font-size:11px}.notice{background:#2b2418;border:1px solid #63502d;color:#f5d9a4;padding:12px 13px;border-radius:13px;font-size:12px;margin-top:12px}.footer{text-align:center;color:#62718c;font-size:11px;margin:20px 0 0}
+@media(min-width:700px){.app{padding:24px 28px 40px}.nav{position:static;background:transparent;border:0;backdrop-filter:none;order:-1;justify-content:flex-end;padding:0;margin:12px 0}.nav button{flex:0 1 115px}.composer{bottom:12px}.hero{padding-top:32px}.prompts{grid-template-columns:repeat(4,minmax(0,1fr))}.prompt{min-height:105px}}
+@media(max-width:370px){.brand h1{font-size:16px}.pill{font-size:10px}.prompts{grid-template-columns:1fr}.hero{padding-top:22px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+  <div class="brand"><div class="logo">✦</div><div><h1 id="appName">Shine AI</h1><p>Your personal AI companion</p></div></div>
+  <span class="pill">● LOCAL DEMO</span>
+</header>
+
+<section id="chatPage" class="page active">
+  <div class="hero">
+    <div class="orb">✦</div>
+    <h2>Hey there, <span class="gradient">what's on your mind?</span></h2>
+    <p>Ask a question, explore an idea, or tell me what you want to get done.</p>
+  </div>
+  <div class="section-title">TRY ASKING</div>
+  <div class="prompts">
+    <button class="prompt" data-prompt="Explain a difficult topic in simple Hindi."><b>📚 Study buddy</b><span>Learn something new</span></button>
+    <button class="prompt" data-prompt="Help me plan a productive day."><b>⚡ Plan my day</b><span>Make a simple schedule</span></button>
+    <button class="prompt" data-prompt="Write a professional message for me."><b>✍️ Writing help</b><span>Draft or improve text</span></button>
+    <button class="prompt" data-prompt="Give me five creative business ideas."><b>💡 Brainstorm</b><span>Explore fresh ideas</span></button>
+  </div>
+  <div class="chat-wrap">
+    <div class="chat-head"><div class="section-title" style="margin:0">YOUR CHAT</div><button class="tiny-btn" id="clearChat">New chat ↺</button></div>
+    <div class="messages" id="messages">
+      <div class="msg ai"><div class="who">SHINE AI</div>Hi! I'm your assistant prototype. Choose a prompt or type a message below. This demo runs without an internet connection, but its replies are scripted until a local language model is connected.</div>
+    </div>
+    <form class="composer" id="chatForm">
+      <button class="icon-btn" type="button" id="micBtn" title="Voice input">🎙</button>
+      <textarea id="chatInput" rows="1" placeholder="Message your assistant…" aria-label="Message your assistant"></textarea>
+      <button class="send" type="submit" aria-label="Send">➤</button>
+    </form>
+    <div class="footer">Prototype mode · No message is sent to a server</div>
+  </div>
+</section>
+
+<section id="voicePage" class="page">
+  <div class="card" style="text-align:center;padding:25px 18px">
+    <div class="section-title">VOICE ASSISTANT</div><h2 style="margin:0">Talk naturally.</h2><p class="muted">Use speech recognition if your browser supports it, or type a message in Chat.</p>
+    <button class="big-mic" id="voiceMic" aria-label="Start voice input">🎙</button>
+    <p id="voiceStatus" class="muted">Tap the microphone to start</p>
+    <div class="voice-actions"><button class="primary" id="startVoice">Start listening</button><button class="secondary" id="stopVoice">Stop</button></div>
+  </div>
+  <div class="card"><h3>🔊 Read replies aloud</h3><p class="muted">The demo can use your device's built-in text-to-speech voices.</p><button class="secondary" id="testSpeak">Test voice</button></div>
+  <div class="notice">Voice availability depends on your Android browser and installed speech services. This prototype does not include a bundled offline speech engine yet.</div>
+</section>
+
+<section id="adminPage" class="page">
+  <div class="card"><div class="section-title">ADMIN CONSOLE · DEMO</div><h2 style="margin:0 0 8px">Workspace overview</h2><p class="muted">Illustrative dashboard for the future app owner. Numbers below are sample data, not live analytics.</p>
+    <div class="stat-grid"><div class="stat"><strong>01</strong><small>Demo user</small></div><div class="stat"><strong>12</strong><small>Sample chats</small></div><div class="stat"><strong>Local</strong><small>AI mode</small></div></div>
+  </div>
+  <div class="card"><h3>⚙️ App settings</h3>
+    <div class="field"><label for="nameInput">Custom app name</label><input id="nameInput" value="Shine AI" maxlength="28"></div>
+    <div class="field"><label for="welcomeInput">Welcome message</label><input id="welcomeInput" value="Hi! I'm your assistant prototype." maxlength="120"></div>
+    <button class="primary" id="saveSettings">Save demo settings</button> <span id="settingsStatus" class="muted"></span>
+  </div>
+  <div class="card"><h3>🔐 Access & privacy</h3><p class="muted">A real release needs secure authentication, role-based admin access, and protected settings. This prototype has no server, password storage, or real user management.</p><button class="secondary" id="showLogin">Open demo login</button></div>
+  <div class="notice">Admin screen is for UI preview only. It is not protected by production-grade authentication.</div>
+</section>
+
+<section id="loginPage" class="page">
+  <div class="card" style="max-width:430px;margin:35px auto">
+    <div class="logo" style="margin-bottom:18px">✦</div><h2 style="margin:0">Welcome back</h2><p class="muted">Demo sign-in — no account is created.</p>
+    <form id="loginForm"><div class="field"><label for="email">Email</label><input id="email" type="email" placeholder="you@example.com" required></div><div class="field"><label for="password">Password</label><input id="password" type="password" placeholder="Any demo password" required minlength="4"></div><button class="primary" type="submit" style="width:100%">Continue to demo</button></form>
+    <p id="loginStatus" class="muted"></p><button class="secondary" id="backChat">Back to chat</button>
+  </div>
+</section>
+</div>
+
+<nav class="nav" aria-label="Main navigation">
+  <button class="active" data-page="chatPage"><span>✦</span>Chat</button>
+  <button data-page="voicePage"><span>🎙</span>Voice</button>
+  <button data-page="adminPage"><span>⚙</span>Admin</button>
+  <button data-page="loginPage"><span>♙</span>Login</button>
+</nav>
+<script>
+const $=s=>document.querySelector(s);
+const messages=$('#messages');
+function addMessage(text,who='ai'){
+  const el=document.createElement('div');el.className='msg '+who;
+  const label=document.createElement('div');label.className='who';label.textContent=who==='user'?'YOU':$('#appName').textContent.toUpperCase();
+  const body=document.createElement('div');body.textContent=text;el.append(label,body);messages.append(el);el.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function replyFor(q){
+ const s=q.toLowerCase();
+ if(/hello|hi\b|hey|salam|namaste/.test(s)) return 'Hello! 👋 I’m here to help. What would you like to work on today?';
+ if(/hindi|simple hindi|hinglish/.test(s)) return 'Bilkul! Main Hindi ya Hinglish mein samjha sakta hoon. Apna topic ya question bhejiye. (Prototype reply)';
+ if(/schedule|plan my day|productive day/.test(s)) return 'Try this simple plan:\\n1. Pick your 3 most important tasks.\\n2. Work in focused 25-minute blocks.\\n3. Take short breaks.\\n4. Review what you completed at the end of the day.';
+ if(/write|message|draft|professional/.test(s)) return 'Sure — tell me who the message is for, what you want to say, and whether the tone should be formal, friendly, or concise.';
+ if(/business|idea|brainstorm/.test(s)) return 'Here are five starter ideas: a niche online store, digital study resources, a local service directory, a short-form educational channel, or a simple appointment-booking service. Validate demand before investing.';
+ if(/explain|study|topic|learn/.test(s)) return 'I can help break a topic into simple steps. Send the exact chapter, concept, or question. Note: this prototype uses sample replies; a real local model still needs to be installed and connected.';
+ if(/who are you|your name/.test(s)) return 'I’m '+$('#appName').textContent+', a prototype personal assistant interface.';
+ return 'I received your message: “'+q+'”\\n\\nThis is the working UI demo, not a connected language model yet. To get genuine AI answers offline, the Android app must bundle or download a compatible local model and inference runtime.';
+}
+function send(text){
+ text=(text||'').trim();if(!text)return;
+ addMessage(text,'user');$('#chatInput').value='';
+ setTimeout(()=>{const r=replyFor(text);addMessage(r,'ai');window._lastReply=r;},250);
+}
+$('#chatForm').addEventListener('submit',e=>{e.preventDefault();send($('#chatInput').value)});
+$('#chatInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('#chatForm').requestSubmit()}});
+document.querySelectorAll('[data-prompt]').forEach(b=>b.addEventListener('click',()=>send(b.dataset.prompt)));
+$('#clearChat').onclick=()=>{messages.innerHTML='';addMessage('New chat started. What can I help you with?')};
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));window.scrollTo({top:0,behavior:'smooth'})}
+document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
+$('#showLogin').onclick=()=>showPage('loginPage');$('#backChat').onclick=()=>showPage('chatPage');
+$('#loginForm').addEventListener('submit',e=>{e.preventDefault();$('#loginStatus').textContent='Demo sign-in complete for this session only. No credentials were saved.';});
+$('#saveSettings').onclick=()=>{const n=$('#nameInput').value.trim()||'Shine AI';$('#appName').textContent=n;document.title=n+' — Prototype';$('#settingsStatus').textContent='Saved for this page session.';};
+let recognition=null;
+function startListening(){
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){$('#voiceStatus').textContent='Speech recognition is not supported in this browser. Try Chrome, or type in Chat.';return}
+ if(recognition){try{recognition.stop()}catch(e){}}
+ recognition=new SR();recognition.lang='hi-IN';recognition.interimResults=false;recognition.maxAlternatives=1;
+ $('#voiceStatus').textContent='Listening… speak now';
+ recognition.onresult=e=>{const t=e.results[0][0].transcript;$('#voiceStatus').textContent='Heard: '+t;showPage('chatPage');send(t)};
+ recognition.onerror=e=>$('#voiceStatus').textContent='Voice input issue: '+e.error+'. You can type instead.';
+ recognition.onend=()=>{if($('#voiceStatus').textContent==='Listening… speak now')$('#voiceStatus').textContent='Listening stopped.'};
+ try{recognition.start()}catch(e){$('#voiceStatus').textContent='Could not start microphone. Check browser permissions.'}
+}
+$('#startVoice').onclick=startListening;$('#voiceMic').onclick=startListening;$('#micBtn').onclick=()=>{showPage('voicePage');startListening()};
+$('#stopVoice').onclick=()=>{if(recognition)recognition.stop();$('#voiceStatus').textContent='Stopped.'};
+function speak(text){if(!('speechSynthesis' in window)){alert('Text-to-speech is not supported in this browser.');return}speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(text))}
+$('#testSpeak').onclick=()=>speak('Hello! I am your AI assistant prototype.'); 
+</script>
+</body>
+</html>
